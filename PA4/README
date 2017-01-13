@@ -1,0 +1,8 @@
+To compile run the following in Terminal:
+
+cmake .
+make
+
+To run after compile use the following command:
+
+./Calibrate

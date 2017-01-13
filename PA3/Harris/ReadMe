@@ -1,0 +1,5 @@
+to compile program use command:
+g++ main.cpp
+
+to run prgram use command:
+./a.out

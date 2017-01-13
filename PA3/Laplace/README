@@ -1,0 +1,14 @@
+to compile use command:
+g++ main.cpp
+
+to run use command:
+
+./a.out (imgage number)
+
+./a.out 1   //for img1.pgm
+./a.out 2   //for img2.pgm
+./a.out 3   //for img3.pgm
+./a.out 4   //for img4.pgm
+./a.out 5   //for img5.pgm
+./a.out 6   //for img6.pgm
+ 
