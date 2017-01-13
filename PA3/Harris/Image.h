@@ -7,8 +7,8 @@ class Image{
    Image(const Image&);
    void readImage(string);
    void writeImage(string);
-
-   Image overlay(const Image&,int);
+   void convert(const Image&, Mat&);
+   Image overlay(const Image&,int, Mat&);
    Image verMask(float* mask, int mSize, const Image&);
    Image horMask(float* mask, int mSize, const Image&);
    Image nonMax(int size);

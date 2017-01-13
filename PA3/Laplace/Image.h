@@ -9,8 +9,9 @@ class Image{
    void readImage(string);
    void writeImage(string);
    void allocate(int,int);
+   void convert(const Image&, Mat&);
    Image overlay(const Image&, int);
-   Image overlay2(const Image&, int);
+   Image overlay2(const Image&, Mat&, int);
    Image verMask(float* mask, int mSize, const Image&);
    Image horMask(float* mask, int mSize, const Image&);
    Image nonMax(int size);
@@ -19,7 +20,7 @@ class Image{
    void mult(const Image&);
    void getData(int**&);
    void setData(int**);
-   void drawCross(int,int,int);
+   void drawCross(Mat&,int,int,int);
    Image nonMin(int);
    Image operator+(const Image&);
    Image operator-(const Image&);

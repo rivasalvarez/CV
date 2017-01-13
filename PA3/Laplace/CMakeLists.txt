@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( Harris_Laplace )
+find_package( OpenCV REQUIRED )
+add_executable( Harris_Laplace main.cpp )
+target_link_libraries( Harris_Laplace ${OpenCV_LIBS} )

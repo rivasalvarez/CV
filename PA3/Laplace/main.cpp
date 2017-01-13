@@ -2,6 +2,11 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string.h>
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/highgui/highgui.hpp"
+using namespace cv;
 using namespace std;
 #include <sstream>
 #include "Image.cpp"
@@ -13,32 +18,36 @@ float SIGMA  = 1.5f;
 float K  = 1.2f;
 int Widths[2] = {850,800};
 int Heights[2] = {680,640};
-Image harrisLaplace(Image &orig, string fName, float sigma, float k);
-void drawCircle(Image &tar, int x0, int y0, int r);
+Image harrisLaplace(Image &orig, Mat&, string fName, float sigma, float k);
+void drawCircle(Image &tar, Mat&,  int x0, int y0, int r);
 
 int main(int argv,char* argc[]){
-	int i, h = Heights[0] , w = Widths[0];
-    char c = argc[1][0];
-    i = int(c) - 48;
+int i, h = Heights[0] , w = Widths[0];
+char c = argc[1][0];
+i = int(c) - 48;
 
-        if(i >= 4){h = Heights[1]; w = Widths[1];};    
+        if(i >= 4){h = Heights[1]; w = Widths[1];};
+    
 	    Image input(w,h), HL(w,h);
+        Mat bmp(h,w, CV_8UC3, Scalar(0,0,255));
         ostringstream srtream;
         srtream <<"img"<<i<<".pgm";
         string filename = srtream.str();
 
-		input.readImage(filename);
-		HL = harrisLaplace(input, filename, SIGMA, K);
-        input.overlay2(HL,255);
-
+	    input.readImage(filename);
+        input.convert(input,bmp);
+        HL = harrisLaplace(input, bmp, filename, SIGMA, K);
+        input.overlay2(HL,bmp,255);
+       
         ostringstream sstream;
         sstream << filename << "_final";
         string finame = sstream.str();
-		input.writeImage(finame);
+        input.writeImage(finame);
+        imwrite("Test.bmp",bmp);
 	return 0;
 }
 
-Image harrisLaplace(Image &orig, string fName, float sigma, float k)
+Image harrisLaplace(Image& orig, Mat& matr, string fName, float sigma, float k)
 {
     int h = orig.height, w = orig.width;
 	Image gauss_ss[gLevels];
@@ -138,8 +147,8 @@ Image harrisLaplace(Image &orig, string fName, float sigma, float k)
 		  if(Copy.data[x][y] != 0.f) {
            count++;
 		   cirSigma = sigma * pow(k, scale.data[x][y]);
-	       Final.drawCross(y, x, 255); 
-           drawCircle(Final,y,x,2 * cirSigma);
+	       Final.drawCross(matr,y, x, 255); 
+           drawCircle(Final,matr,y,x,2 * cirSigma);
 		  }
 	   }
     }
@@ -151,29 +160,39 @@ Image harrisLaplace(Image &orig, string fName, float sigma, float k)
 	return Final;
 }
 
-void drawCircle(Image &tar, int x0, int y0, int r)
-{
-	int x, y;
+void drawCircle(Image &tar, Mat& mat, int x0, int y0, int r){
+int x, y;
+Vec3b red;
+red[0] =0; red[1] = 0; red[2] = 255;
+
 	for(int i = -r; i <= r; i++)
 	{
 		x = x0 + i;
 		if(x >= 0 && x < tar.width)
 		{
 			y = int( sqrt(r*r - (x-x0)*(x-x0) ) + y0 );
-			if(y >= 0 && y < tar.height)
+			if(y >= 0 && y < tar.height){
 				tar.data[y][x] = 255.f;
+                mat.at<Vec3b>(Point(x,y)) = red;
+            }
 			y = int( -sqrt(r*r - (x-x0)*(x-x0) ) + y0 );
-			if(y >= 0 && y < tar.height)
+			if(y >= 0 && y < tar.height){
 				tar.data[y][x] = 255.f;
+                mat.at<Vec3b>(Point(x,y)) = red;
+            }
 		}
 		y = y0 + i;
 		if(y >= 0 && y < tar.height){
 			x = int( sqrt(r*r - (y-y0)*(y-y0) ) + x0 );
-			if (x >= 0 && x < tar.width)
+			if (x >= 0 && x < tar.width){
 				tar.data[y][x] = 255.f;
+                mat.at<Vec3b>(Point(x,y)) = red;
+            }
 			x = int( -sqrt(r*r - (y-y0)*(y-y0) ) + x0 );
-			if (x >= 0 && x < tar.height)
+			if (x >= 0 && x < tar.height){
 				tar.data[y][x] = 255.f;
+                mat.at<Vec3b>(Point(x,y)) = red;
+            }
 		}
 	}  
 }

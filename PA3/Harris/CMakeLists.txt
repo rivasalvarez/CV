@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( Harris )
+find_package( OpenCV REQUIRED )
+add_executable( Harris main.cpp )
+target_link_libraries( Harris ${OpenCV_LIBS} )

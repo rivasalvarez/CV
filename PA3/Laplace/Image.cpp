@@ -253,22 +253,29 @@ Image Image::overlay(const Image &RHS, int val){
 
 }
 
-Image Image::overlay2(const Image &RHS, int val){
+Image Image::overlay2(const Image &RHS, Mat& mat, int val){
+Vec3b red;
+red[0] = 0; red[1] = 0; red[2] = 255;
+
     for(int i = 0;i < height;i++){
        for(int j = 0;j< width; j++){
         if(RHS.data[i][j] != 0){
-          data[i][j] = val; 
+          data[i][j] = val;
+          mat.at<Vec3b>(Point(j,i)) = red; 
         }
        }
     }
 }
-void Image::drawCross(int j, int i, int val){
-   
+void Image::drawCross(Mat& mat, int j, int i, int val){
+Vec3b red;
+
+red[0] = 0; red[1] = 0; red[2] = 255;
+ 
           for(int z = 1 ; z < 3; z++){
-          if(i+z < height) data[i+z][j] = val;
-          if(i-z >= 0) data[i-z][j] = val;
-          if(j+z < width) data[i][j+z] = val;
-          if(j-z >= 0) data[i][j-z] = val;
+          if(i+z < height){ data[i+z][j] = val;  mat.at<Vec3b>(Point(j,i+z)) = red;}
+          if(i-z >= 0){ data[i-z][j] = val;  mat.at<Vec3b>(Point(j,i-z)) = red;}
+          if(j+z < width){ data[i][j+z] = val;  mat.at<Vec3b>(Point(j+z,i)) = red;}
+          if(j-z >= 0){ data[i][j-z] = val;  mat.at<Vec3b>(Point(j-z,i)) = red;}
           }
 }
 
@@ -314,6 +321,19 @@ Image Image::nonMin(int window_size){
 	    }
      }
 	return temp;
+}
+
+
+void Image::convert(const Image &RHS, Mat& mat){
+Vec3b color;
+
+    for(int i = 0; i < height; i++){
+    	for(int j = 0; j < width; j++){
+	    color[0] = color[1] = color[2] = RHS.data[i][j];
+	    mat.at<Vec3b>(Point(j,i)) = color;
+	}
+    }
+
 }
 
 #endif

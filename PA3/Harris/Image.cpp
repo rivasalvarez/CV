@@ -1,7 +1,6 @@
 #ifndef IMAGE_CPP
 #define IMAGE_CPP
 #include "Image.h"
-#include <fstream>
 
 Image::Image(int w, int h){
   width = w;
@@ -231,20 +230,35 @@ Image Image::nonMax(int window_size){
 	return ret;
 }
 
-Image Image::overlay(const Image &RHS, int val){
-  
+Image Image::overlay(const Image &RHS, int val, Mat& mat){
+Vec3b red;
+
+red[0] = 0; red[1] = 0; red[2] = 255;
+
     for(int i = 0;i < height;i++){
        for(int j = 0;j< width; j++){
-        if(RHS.data[i][j] != 0){
-          data[i][j] = val; 
-          for(int z = 1 ; z < 3; z++){
-          if(i+z < height) data[i+z][j] = val;
-          if(i-z >= 0) data[i-z][j] = val;
-          if(j+z < width) data[i][j+z] = val;
-          if(j-z >= 0) data[i][j-z] = val;
+          if(RHS.data[i][j] != 0){
+             data[i][j] = val; 
+             mat.at<Vec3b>(Point(j,i)) = red;
+             for(int z = 1 ; z < 3; z++){
+                if(i+z < height){ data[i+z][j] = val; mat.at<Vec3b>(Point(j,i+z)) = red;}
+                if(i-z >= 0){ data[i-z][j] = val; mat.at<Vec3b>(Point(j,i-z)) = red;}
+                if(j+z < width){ data[i][j+z] = val; mat.at<Vec3b>(Point(j+z,i)) = red;}
+                if(j-z >= 0){ data[i][j-z] = val; mat.at<Vec3b>(Point(j-z,i)) = red;}
+             }
           }
-        }
        }
+    }
+}
+
+void Image::convert(const Image &RHS, Mat& mat){
+Vec3b color;
+
+    for(int i = 0; i < height; i++){
+    	for(int j = 0; j < width; j++){
+	    color[0] = color[1] = color[2] = RHS.data[i][j];
+	    mat.at<Vec3b>(Point(j,i)) = color;
+	}
     }
 
 }

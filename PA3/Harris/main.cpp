@@ -2,6 +2,11 @@
 #include <fstream>
 #include <sstream>
 #include <stdlib.h>
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/highgui/highgui.hpp"
+using namespace cv;
 using namespace std;
 #include <string.h>
 #include "Image.cpp"
@@ -11,6 +16,7 @@ using namespace std;
 float SIGMA = 1.5, LAMBDA = 0.7, ALPHA = 0.06;
 int MASK_S = SIGMA * 5;
 string fNames[3] = {"Test1.pgm","Test2.pgm","Test3.pgm"};
+string bmpNames[3] = {"Test1.bmp","Test2.bmp","Test3.bmp"};
 int Heights[3] = {257,571,571};
 int Widths[3] = {256,618,602};
 int Over[3] = {125,255,255};
@@ -49,8 +55,11 @@ image.readImage(fNames[z]);
        Raw.data[i][j] = det - (ALPHA * trace * trace);
        if(Raw.data[i][j] > cornerMax){cornerMax = Raw.data[i][j];}
       }
+
    }
-cout << cornerMax<< endl;
+   cout << cornerMax<< endl;
+
+   Mat bmp(Raw.height,Raw.width, CV_8UC3, Scalar(0,0,255));
 
    ostringstream sstring;
    sstring << fNames[z] <<"_Raw";
@@ -74,8 +83,10 @@ cout << cornerMax<< endl;
    sstring << fNames[z] << "_final";
    temp = sstring.str();
    Image Final(image);
-   Final.overlay(Raw,Over[z]);
+   Final.convert(Final,bmp);
+   Final.overlay(Raw,Over[z],bmp);
    Final.writeImage(temp);
+   imwrite(bmpNames[z],bmp);
 }
 return 0;
 }

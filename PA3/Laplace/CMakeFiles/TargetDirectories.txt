@@ -1,0 +1,3 @@
+/home/marco/Desktop/CV/PA3/Laplace/CMakeFiles/edit_cache.dir
+/home/marco/Desktop/CV/PA3/Laplace/CMakeFiles/rebuild_cache.dir
+/home/marco/Desktop/CV/PA3/Laplace/CMakeFiles/Harris_Laplace.dir
